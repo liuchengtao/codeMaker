@@ -1,0 +1,10 @@
+unit %0:S;
+%1:S
+interface
+  type
+    %2:S = ^%3:S;
+    %5:S
+    %3:S = Record
+      %4:S   
+  end;
+implementation

@@ -1,0 +1,29 @@
+unit uBaseDao;
+
+interface
+  uses  System.SysUtils, System.Rtti, System.TypInfo, System.Generics.Collections;
+  type
+  TczSort = Record         //≈≈–Ú
+      FFieldName: String;
+      FSort: String;
+    end;
+
+    TczPage = Record    //∑÷“≥
+      FPageNum: Integer;
+      FPageCount: Integer;
+    end;
+
+  TczBaseDao = class
+    private
+
+    public
+    function add<T>(Aitem: T): Integer;
+    function delete<T>(Aitem: T): Integer;
+    function update<T>(Aitem: T): Integer;
+    function find<T>(Aitem: T): TList<T>;    overload;
+    function find<T>(Aitem: T; sort: TczSort;page: TczPage): TList<T>;   overload;
+
+  end;
+implementation
+
+end.

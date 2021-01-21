@@ -1,0 +1,76 @@
+unit uBaseDM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
+  Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet;
+
+type
+   TczSort = Record         //≈≈–Ú
+        FColName: String;
+        FSort: String;
+      end;
+
+    TczPage = Record    //∑÷“≥
+      FPageNum: Integer;
+      FPageCount: Integer;
+    end;
+
+    TTest = Record    //≤‚ ‘
+      id: Integer;
+      name: String;
+      age: Integer;
+      bz: String;
+      address: String;
+    End;
+
+    TBaseDM = class(TDataModule)
+      BaseConn: TFDConnection;
+    ExecQry: TFDQuery;
+    private
+      { Private declarations }
+    public
+      { Public declarations }
+      function OpenSQL(sqlStr: String): TFDQuery;
+      function ExecSQL(sqlStr: String): Integer;
+    end;
+
+var
+  BaseDM: TBaseDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+{ TBaseDM }
+
+function TBaseDM.ExecSQL(sqlStr: String): Integer;
+begin
+  Try
+    ExecQry.Close;
+    ExecQry.SQL.Text := sqlStr;
+    ExecQry.ExecSQL;
+    Result := 0;
+  Except
+    Result := -1;
+  End;
+end;
+
+function TBaseDM.OpenSQL(sqlStr: String): TFDQuery;
+begin
+  Try
+    Result := TFDQuery.Create(nil);
+    Result.Connection := BaseConn;
+    Result.Open(sqlStr);
+  Except
+    FreeAndNil(Result);
+  End;
+end;
+
+end.

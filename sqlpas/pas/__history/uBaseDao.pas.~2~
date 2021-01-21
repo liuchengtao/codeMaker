@@ -1,0 +1,15 @@
+unit uBaseDao;
+
+interface
+  uses Rtti;
+  type TczSort = class
+      FFieldName: String;
+      FSort: String;
+  end;
+
+  TczBaseDao = class
+
+  end;
+implementation
+
+end.

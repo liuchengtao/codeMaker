@@ -1,0 +1,27 @@
+unit uBaseDao1;
+
+interface
+  uses FireDAC.Comp.Client,FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet;
+   type
+     TczSort = Record         //≈≈–Ú
+        FColName: String;
+        FSort: String;
+      end;
+
+    TczPage = Record    //∑÷“≥
+      FPageNum: Integer;
+      FPageCount: Integer;
+    end;
+
+    TTest = Record
+      id: Integer;
+      name: String;
+      age: Integer;
+      bz: String;
+      address: String;
+    End;
+   function OpenSQL(sqlStr: String) : TFDOQuery;
+implementation
+
+end.

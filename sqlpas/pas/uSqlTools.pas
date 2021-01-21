@@ -1,0 +1,345 @@
+unit uSqlTools;
+interface
+uses Data.DB,System.Generics.Collections,FireDAC.Comp.Client,System.SysUtils,System.Classes;
+ type
+   TcenzTabelBuilder = class
+     private
+       FTableName: String;
+       FDaoUnitName: String;
+       FDaoName: String;
+       FEntityName: String;
+       FEntityUnitName: String;
+       FPath: String;
+       FComment: String;
+       FZJ: Boolean;
+       FFieldList : TList<TField>;
+       FQuery: TFDQuery;
+       FCommentQry: TFDQuery;
+       function getSQLSELECT: String;
+       function getWHERECLAUSE: String;
+       function getSQLADDCOL: String;
+       function getRowStr(field: TField): String;
+       function getComment(fieldStr: String): String;
+       procedure setCommentQry(conn: TFDConnection;schema: String);
+       procedure buildEntity;
+       procedure buildDao;
+       procedure buildService;
+     public
+     function getDaoAdd: String;
+     constructor Create(const tablename: String;conn: TFDConnection);  overload;
+     constructor Create(const tablename: String;conn: TFDConnection; IsZj: Boolean); overload;//是否新增表和字段的映射
+     function getRecord: String;
+     function getDao: String;
+     procedure build;  //创建
+   end;
+implementation
+{ TcenzTabelBuilder }
+constructor TcenzTabelBuilder.Create(const tablename: String;conn: TFDConnection);
+var sqlStr: String;
+begin
+  FPath := ExtractFilePath(ParamStr(0)) ;
+  if tablename.IndexOf('.') >= 0 then  //减去表名的数据库名称
+     FTableName := tablename.Split(['.'])[1];
+
+  FQuery := TFDQuery.Create(nil);
+  FFieldList := TList<TField>.Create;
+  FDaoUnitName := 'u'+FTableName+'Dao';
+  FDaoName := FTableName+'Dao';
+  FEntityName := StringReplace(FTableName,'_','',[rfReplaceAll]);
+  FEntityUnitName := 'u'+FEntityName;
+
+  FQuery.Connection := conn;
+  //获取表的注释
+  sqlStr := 'show table status like ''%:S''';
+  sqlStr := Format(sqlStr,[FTableName]);
+  FQuery.SQL.Text := sqlStr;
+  FQuery.Open;
+  FComment := FQuery.FieldByName('Comment').AsString;
+  FQuery.Close;
+
+  sqlStr := 'select *  from %:S  limit 1';
+  sqlStr := Format(sqlStr,[tablename]);
+  FQuery.SQL.Text := sqlStr;
+  FQuery.Open;
+
+  Self.setCommentQry(conn,tablename.Split(['.'])[0]);
+end;
+procedure TcenzTabelBuilder.buildDao;
+var  stm: TStringStream;
+  temPath,temStr,sqlCol: String;
+  I: Integer;
+begin
+  //0. 加载dao模板文件
+  temPath := FPath + 'tem/dao.txt';
+  forcedirectories(FPath + 'test/dao');
+
+  if not FileExists(temPath) then exit;
+
+  stm := TStringStream.Create('',TENcoding.UTF8);
+  stm.LoadFromFile(temPath);
+  temStr := stm.DataString;
+
+  //1 写入表名称
+  temStr := StringReplace(temStr,'{TABLE_NAME}',FTableName,[rfReplaceAll, rfIgnoreCase]);
+  //2 写入 实体类 单元名称
+  temStr := StringReplace(temStr,'{ENTITY_UNIT}',FEntityUnitName,[rfReplaceAll, rfIgnoreCase]);
+  temStr := StringReplace(temStr,'{ENTITY}',FEntityUnitName,[rfReplaceAll, rfIgnoreCase]);
+
+  //3 写入 TABLE_COL 和 TABLE_ADD_COL
+   for I := 0 to FFieldList.Count - 1 do
+   begin
+    sqlCol := sqlCol + FFieldList.Items[I].FieldName + ',';
+   end;
+   temStr := StringReplace(temStr,'{TABLE_COL}',sqlCol,[rfReplaceAll, rfIgnoreCase]);
+   sqlCol := StringReplace(sqlCol,'id,','',[rfIgnoreCase]);
+   temStr := StringReplace(temStr,'{TABLE_ADD_COL}',sqlCol,[rfReplaceAll, rfIgnoreCase]);
+
+  //4 写入SQL_COL_ADD
+  temStr := StringReplace(temStr,'{SQL_COL_ADD}',Self.getSQLADDCOL,[rfReplaceAll, rfIgnoreCase]);
+
+  //5 写入WHERE_CLAUSE
+  temStr := StringReplace(temStr,'{WHERE_CLAUSE}',Self.getWHERECLAUSE,[rfReplaceAll, rfIgnoreCase]);
+
+  //6 写入SQL_SELECT;
+  temStr := StringReplace(temStr,'{SQL_SELECT}',Self.getSQLSELECT,[rfReplaceAll, rfIgnoreCase]);
+   stm.Clear;
+  stm.Position := 0;
+  stm.WriteString(temStr);
+  stm.SaveToFile(FPath +'test/dao/'+FDaoUnitName+'.pas');
+  stm.Free;
+end;
+
+procedure TcenzTabelBuilder.buildEntity;
+var temPath,s,temStr,tableZJ: String;
+   I: Integer;
+   stm: TStringStream;
+begin
+  temPath := FPath + 'tem/entity.txt';
+   forcedirectories(FPath + 'test/entity');
+  if not FileExists(temPath) then exit;
+
+  stm := TStringStream.Create('',TENcoding.UTF8);
+  stm.LoadFromFile(temPath);
+  temStr := stm.DataString;
+
+
+  for I := 0 to FFieldList.Count - 1 do
+  begin
+    if I = 0 then
+      s := getRowStr(FFieldList.Items[I])
+    else
+      s := s + #13 + getRowStr(FFieldList.Items[I]);
+  end;
+  if FZJ then
+  begin
+     tableZJ := '[Table(''%0:S'',''%1:S'')]';
+     tableZJ := Format(tableZJ,[FTableName,FComment]);
+  end;
+  temStr := Format(temStr,[FEntityUnitName,'{这是注释}','R'+FEntityName,'T'+FEntityName,s,tableZj]);
+  stm.Clear;
+  stm.Position := 0;
+  stm.WriteString(temStr);
+  stm.SaveToFile(FPath +'test/entity/'+FEntityUnitName+'.pas');
+  stm.Free;
+end;
+
+procedure TcenzTabelBuilder.buildService;
+begin
+  //
+end;
+
+constructor TcenzTabelBuilder.Create(const tablename: String;
+  conn: TFDConnection; IsZj: Boolean);
+begin
+ //
+  FZj := IsZj;
+  Create(tablename,conn);
+end;
+
+function TcenzTabelBuilder.getComment(fieldStr: String): String;
+begin
+  with FCOmmentQry do
+  begin
+    First;
+    while not Eof do
+    begin
+      if FieldByName('COLUMN_NAME').AsString = fieldStr then
+        Result := FieldByName('COLUMN_COMMENT').AsString;
+      Next;
+    end;
+  end;
+end;
+
+function TcenzTabelBuilder.getDao: String;
+var  fieldsl: TStringlist;
+    fieldList: TList<TField>;
+    I: Integer;
+    s: String;
+begin
+  fieldsl := TStringlist.Create;
+  fieldList := TList<TField>.Create;
+  Try
+    FQuery.GetFieldNames(fieldsl);
+    fieldsl.Delimiter := ';';
+    FQuery.GetFieldList(fieldList,fieldsl.DelimitedText);
+    s := FTableName +'Dao';
+    for I := 0 to fieldList.Count - 1 do
+    begin
+      s := s + #13 + getRowStr(fieldList.Items[I]);
+    end;
+    s := s + #13 + 'end;';
+    Result := s;
+  Finally
+    fieldsl.Free;
+    fieldList.Free;
+  End;
+ // FQuery.get
+end;
+
+
+function TcenzTabelBuilder.getDaoAdd: String;
+var sl: TStringList;
+sMethod,sTem,sFields,sField: String;
+  I: Integer;
+  stm: TStringStream;
+begin
+   Result := '';
+   stm := TStringStream.Create('',TEncoding.UTF8);
+   stm.LoadFromFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\tem\methoddaotem.txt');
+   stm.Position := 0;
+   sMethod := stm.DataString;
+
+   for I := 0 to FFieldList.Count - 1 do
+   begin
+     sField := 'FieldByName(''%:S'').AsVariant := entity.%:S;';
+     sField := Format(sField,[FFieldList.Items[I].FieldName]);
+     sFields := sFields + #10#13 + sField;
+   end;
+   sMethod := Format(sMethod,[FDaoName,FEntityName,FTableName,sFields]);
+  // stm.Free;
+   stm.Clear;
+   stm.LoadFromFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\tem\daotem.txt');
+   stm.Position := 0;
+   sTem := stm.DataString;
+   sTem := Format(sTem,[FDaoUnitName,'',FDaoName+'=Class',sMethod]);
+   stm.Free;
+   stm := TStringStream.Create(sTem,TEncoding.UTF8);
+   stm.SaveToFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\'+FDaoUnitName+ '.pas');
+   stm.Free;
+end;
+
+function TcenzTabelBuilder.getRecord: String;
+var   fieldsl: TStringlist;
+    fieldList: TList<TField>;
+    I: Integer;
+    s: String;
+begin
+  fieldsl := TStringlist.Create;
+  FFieldList := TList<TField>.Create;
+  Try
+    FQuery.GetFieldNames(fieldsl);
+    fieldsl.Delimiter := ';';
+    FQuery.GetFieldList(FFieldList,fieldsl.DelimitedText);
+    s := FTableName +' = Record';
+    for I := 0 to FFieldList.Count - 1 do
+    begin
+      s := s + #13 + getRowStr(FFieldList.Items[I]);
+    end;
+    s := s + #13 + 'end;';
+    Result := s;
+  Finally
+    fieldsl.Free;
+   // fieldList.Free;
+  End;
+end;
+function TcenzTabelBuilder.getRowStr(field: TField): String;
+var fileType,zjStr: String;
+begin
+  zjStr := '[FieldInfo(''%0:S'',''%1:S'')]';
+  case field.DataType of
+    ftString :  fileType := 'String';
+    ftInteger :  fileType := 'Integer';
+    else
+      fileType := 'String';
+  end;
+  if FZJ then
+    zjStr := '    ' + Format(zjStr,[field.FieldName,getComment(field.FieldName)]) + #10
+  else
+    zjStr := '';
+  Result := zjStr + '    ' + field.FieldName + ': ' + fileType + ';';
+end;
+
+function TcenzTabelBuilder.getSQLADDCOL: String;
+var I: Integer;
+begin
+   Result := '';
+   for I := 0 to FFieldList.Count - 1 do
+   begin
+      if UpperCase(FFieldList.Items[I].FieldName) <> 'ID' then
+      begin
+        case FFieldList.Items[I].DataType of
+          ftString,ftDate, ftTime, ftDateTime: Result := Result + ',' + ''''+'%'+(I+2).toString+'S'+'''';
+          ftSmallint, ftInteger, ftWord,ftFloat: Result := Result + ','+'%'+(I+2).toString+'D'; // 0..4
+          ftBoolean: Result := Result + ','+'%'+(I+2).toString+'S';
+          else
+           Result := Result + ','+'%'+(I+2).toString+'S';
+        end;
+
+      end;
+   end;
+end;
+
+function TcenzTabelBuilder.getSQLSELECT: String;
+var I: Integer;
+   ss,s: String;
+begin
+   Result := '';
+   ss := 'entity.%0:S := FieldByName(%0:S).AsString;';
+   for I := 0 to FFieldList.Count - 1 do
+   begin
+     s := Format(ss,[FFieldList.Items[I].FieldName]);
+     Result := Result + s + #10;
+   end;
+end;
+
+function TcenzTabelBuilder.getWHERECLAUSE: String;
+var I: Integer;
+   ss,s: String;
+begin
+   Result := '';
+   ss := '.add(%0:S,entity.%0:S)';
+   for I := 0 to FFieldList.Count - 1 do
+   begin
+     s := Format(ss,[FFieldList.Items[I].FieldName]);
+     Result := Result + s + #10;
+   end;
+end;
+
+procedure TcenzTabelBuilder.setCommentQry(conn: TFDConnection;schema: String);
+var sqlStr: String;
+begin
+ sqlStr := 'select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = ''%0:S'' and TABLE_SCHEMA = ''%1:S''';
+ sqlStr := Format(sqlStr,[FTableName,schema]);
+ //if Assigned(FCommentQry) then
+ FCommentQry := TFDQuery.Create(nil);
+ FCommentQry.Connection := conn;
+ FCommentQry.SQL.Text := sqlStr;
+ FCommentQry.Open;
+end;
+
+procedure TcenzTabelBuilder.build;
+var fieldsl: TStringList;
+begin
+  fieldsl := TStringlist.Create;
+  Try
+    FQuery.GetFieldNames(fieldsl);
+    fieldsl.Delimiter := ';';
+    FQuery.GetFieldList(FFieldList,fieldsl.DelimitedText);
+    buildEntity;
+    buildDao;
+  Finally
+    fieldsl.Free;
+  End;
+end;
+
+end.
