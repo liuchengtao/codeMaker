@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_sale_list_goodsDao;
 
 interface
   uses SysUtils,utsalelistgoods,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,code,model,name,num,price,total,unit,sale_list_id,type_id,goods_id,';
         TABLE_ADD_COL = 'code,model,name,num,price,total,unit,sale_list_id,type_id,goods_id,';
   Type
-   TDao = class
+   t_sale_list_goodsDao = class
     public
     function add(entity: utsalelistgoods): Integer;  //新增 一条 id
     function updateById(entity: utsalelistgoods): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_sale_list_goodsDao }
 
-function TDao.add(entity: utsalelistgoods): Integer;
+functiont_sale_list_goodsDao.add(entity: utsalelistgoods): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.code,entity.model,entity.name,entity.num,entity.price,entity.total,entity.unit,entity.sale_list_id,entity.type_id,entity.goods_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_sale_list_goodsDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utsalelistgoods): TList<utsalelistgoods>;
+function t_sale_list_goodsDao.findList(entity: utsalelistgoods): TList<utsalelistgoods>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utsalelistgoods;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -94,11 +88,6 @@ entity.sale_list_id := FieldByName(sale_list_id).AsString;
 entity.type_id := FieldByName(type_id).AsString;
 entity.goods_id := FieldByName(goods_id).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -106,7 +95,7 @@ entity.goods_id := FieldByName(goods_id).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utsalelistgoods;
+function t_sale_list_goodsDao.getOneById(id: Integer): utsalelistgoods;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -130,11 +119,6 @@ entity.sale_list_id := FieldByName(sale_list_id).AsString;
 entity.type_id := FieldByName(type_id).AsString;
 entity.goods_id := FieldByName(goods_id).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -142,13 +126,13 @@ entity.goods_id := FieldByName(goods_id).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utsalelistgoods): Integer;
+function t_sale_list_goodsDao.updateById(entity: utsalelistgoods): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.code,entity.model,entity.name,entity.num,entity.price,entity.total,entity.unit,entity.sale_list_id,entity.type_id,entity.goods_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

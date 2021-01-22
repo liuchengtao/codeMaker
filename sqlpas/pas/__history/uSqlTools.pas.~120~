@@ -9,6 +9,8 @@ uses Data.DB,System.Generics.Collections,FireDAC.Comp.Client,System.SysUtils,Sys
        FDaoName: String;
        FEntityName: String;
        FEntityUnitName: String;
+       FServiceName: String;
+       FServiceUnitName: String;
        FPath: String;
        FComment: String;
        FZJ: Boolean;
@@ -43,11 +45,13 @@ begin
 
   FQuery := TFDQuery.Create(nil);
   FFieldList := TList<TField>.Create;
+
   FDaoUnitName := 'u'+FTableName+'Dao';
   FDaoName := FTableName+'Dao';
   FEntityName := StringReplace(FTableName,'_','',[rfReplaceAll]);
   FEntityUnitName := 'u'+FEntityName;
-
+  FServiceUnitName := 'u' + FTableName + 'Service';
+  FDaoName := FTableName + 'Service';
   FQuery.Connection := conn;
   //获取表的注释
   sqlStr := 'show table status like ''%:S''';
@@ -71,6 +75,8 @@ var  stm: TStringStream;
 begin
   //0. 加载dao模板文件
   temPath := FPath + 'tem/dao.txt';
+  forcedirectories(FPath + 'test/dao');
+
   if not FileExists(temPath) then exit;
 
   stm := TStringStream.Create('',TENcoding.UTF8);
@@ -89,7 +95,7 @@ begin
     sqlCol := sqlCol + FFieldList.Items[I].FieldName + ',';
    end;
    temStr := StringReplace(temStr,'{TABLE_COL}',sqlCol,[rfReplaceAll, rfIgnoreCase]);
-   sqlCol := StringReplace(sqlCol,'id,','',sqlCol,[rfIgnoreCase]);
+   sqlCol := StringReplace(sqlCol,'id,','',[rfIgnoreCase]);
    temStr := StringReplace(temStr,'{TABLE_ADD_COL}',sqlCol,[rfReplaceAll, rfIgnoreCase]);
 
   //4 写入SQL_COL_ADD
@@ -113,6 +119,7 @@ var temPath,s,temStr,tableZJ: String;
    stm: TStringStream;
 begin
   temPath := FPath + 'tem/entity.txt';
+   forcedirectories(FPath + 'test/entity');
   if not FileExists(temPath) then exit;
 
   stm := TStringStream.Create('',TENcoding.UTF8);
@@ -141,8 +148,43 @@ begin
 end;
 
 procedure TcenzTabelBuilder.buildService;
+var  stm: TStringStream;
+  temPath,temStr,sqlCol: String;
+  I: Integer;
 begin
+  //0. 加载service模板文件
+  temPath := FPath + 'tem/service.txt';
+  forcedirectories(FPath + 'test/service');
 
+  if not FileExists(temPath) then exit;
+
+  stm := TStringStream.Create('',TENcoding.UTF8);
+  stm.LoadFromFile(temPath);
+  temStr := stm.DataString;
+
+  //1 ServiceUnitName
+  temStr := StringReplace(temStr,'{ServiceUnitName}',FServiceName,[rfReplaceAll, rfIgnoreCase]);
+
+  //2 ServiceName
+  temStr := StringReplace(temStr,'{ServiceName}',FServiceName,[rfReplaceAll, rfIgnoreCase]);
+
+  //3 DaoUnitName
+  temStr := StringReplace(temStr,'{DaoUnitName}',FServiceName,[rfReplaceAll, rfIgnoreCase]);
+
+  //4 EntityUnitName
+  temStr := StringReplace(temStr,'{EntityUnitName}',FServiceName,[rfReplaceAll, rfIgnoreCase]);
+
+  //5 DaoName
+  temStr := StringReplace(temStr,'{DaoName}',FServiceName,[rfReplaceAll, rfIgnoreCase]);
+
+    //6 EntityName
+  temStr := StringReplace(temStr,'{EntityName}',FServiceName,[rfReplaceAll, rfIgnoreCase]);
+
+   stm.Clear;
+  stm.Position := 0;
+  stm.WriteString(temStr);
+  stm.SaveToFile(FPath +'test/service/'+FServiceUnitName+'.pas');
+  stm.Free;
 end;
 
 constructor TcenzTabelBuilder.Create(const tablename: String;
@@ -333,6 +375,8 @@ begin
     fieldsl.Delimiter := ';';
     FQuery.GetFieldList(FFieldList,fieldsl.DelimitedText);
     buildEntity;
+    buildDao;
+    buildService;
   Finally
     fieldsl.Free;
   End;

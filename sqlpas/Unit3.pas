@@ -34,7 +34,7 @@ var
   Form3: TForm3;
 
 implementation
-uses uDao,uBaseDM;
+uses uBaseDM;
 {$R *.dfm}
 
 procedure TForm3.Button1Click(Sender: TObject);

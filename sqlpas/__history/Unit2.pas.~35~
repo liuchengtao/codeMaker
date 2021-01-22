@@ -33,16 +33,16 @@ type
     CheckListBox1: TCheckListBox;
     Label5: TLabel;
     tableEdt: TEdit;
-    Label6: TLabel;
-    unitEdt: TButtonedEdit;
     Button2: TButton;
     FDQuery1: TFDQuery;
-    ListBox1: TListBox;
     Button3: TButton;
     zjCheck: TCheckBox;
+    ListBox1: TListBox;
+    FDTable1: TFDTable;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure CheckListBox1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -59,16 +59,17 @@ uses System.Generics.Collections,uSqlTools,System.Json,uBaseDao;
 procedure TForm2.Button1Click(Sender: TObject);
 var dao: TczBaseDao<TczSort>;
 sort: TczSort;
+s: TFDDatSColumn;
+ss: TFilterOptions;
 begin
 //
   FDConnection1.Connected := True;
   FDConnection1.GetTableNames('','','',CheckListBox1.Items, [osMy], [tkTable]);
-//  dao := TczBaseDao<TczSort>.Create;
-// // New(sort);
-//  sort := TczSort.Create;
-//  sort.FFieldName := 'sss';
-//  sort.FSort := 'asad';
-//  dao.add(sort);
+ // FDTable1.Connection := FDConnection1;
+//  FDTable1.Open('t_log');
+//  ss := FDTable1.FilterOptions;
+//  s := FDTable1.GetFieldColumn(FDTable1.FieldByName('id'));
+
 end;
 
 procedure TForm2.Button2Click(Sender: TObject);
@@ -94,7 +95,7 @@ begin
       for J := 0 to List.Count - 1 do
       begin
         s := List.Items[J].FieldName;
-        Listbox1.Items.Add(s);
+       // Listbox1.Items.Add(s);
       end;
       FreeAndNil(fields);
       FreeAndNil(List);
@@ -112,21 +113,28 @@ begin
   begin
     if CheckListBox1.Checked[I] then
     begin
-      tableBuilder := TcenzTabelBuilder.Create(CheckListBox1.Items[I],FDConnection1);
-      s := s + #10#13 + tableBuilder.getRecord;
+      //tableBuilder := TcenzTabelBuilder.Create(CheckListBox1.Items[I],FDConnection1);
+      tableBuilder := TcenzTabelBuilder.Create(CheckListBox1.Items[I],FDConnection1,zjCheck.Checked);
+      tableBuilder.build;
+    //  s := s + #10#13 + tableBuilder.getRecord;
     end;
   end;
-  Try
-    temStm := TStringStream.Create('',TEncoding.UTF8);
-    temStm.LoadFromFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\tem\tem1.txt');
-    ss := Format(temStm.DataString,[s]);
-    stm := TStringStream.Create(ss,TEncoding.UTF8);
-    stm.SaveToFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\tem\test.txt');
-    tableBuilder.getDao;
-  Finally
-    stm.Free;
-    temStm.Free;
-  End;
+//  Try
+//    temStm := TStringStream.Create('',TEncoding.UTF8);
+//    temStm.LoadFromFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\tem\tem1.txt');
+//    ss := Format(temStm.DataString,[s]);
+//    stm := TStringStream.Create(ss,TEncoding.UTF8);
+//    stm.SaveToFile('D:\Users\DELL\103\cenzCodeMaker\sqlpas\Win32\Debug\tem\test.txt');
+//    tableBuilder.getDaoAdd;
+//  Finally
+//    stm.Free;
+//    temStm.Free;
+//  End;
+end;
+
+procedure TForm2.CheckListBox1Click(Sender: TObject);
+begin
+  CheckListBox1.CheckAll(cbChecked);
 end;
 
 end.

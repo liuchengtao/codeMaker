@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_goodsunitDao;
 
 interface
   uses SysUtils,utgoodsunit,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,name,';
         TABLE_ADD_COL = 'name,';
   Type
-   TDao = class
+   t_goodsunitDao = class
     public
     function add(entity: utgoodsunit): Integer;  //新增 一条 id
     function updateById(entity: utgoodsunit): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_goodsunitDao }
 
-function TDao.add(entity: utgoodsunit): Integer;
+functiont_goodsunitDao.add(entity: utgoodsunit): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.name,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_goodsunitDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utgoodsunit): TList<utgoodsunit>;
+function t_goodsunitDao.findList(entity: utgoodsunit): TList<utgoodsunit>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utgoodsunit;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -76,11 +70,6 @@ begin
           entity.id := FieldByName(id).AsString;
 entity.name := FieldByName(name).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -88,7 +77,7 @@ entity.name := FieldByName(name).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utgoodsunit;
+function t_goodsunitDao.getOneById(id: Integer): utgoodsunit;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -103,11 +92,6 @@ begin
       entity.id := FieldByName(id).AsString;
 entity.name := FieldByName(name).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -115,13 +99,13 @@ entity.name := FieldByName(name).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utgoodsunit): Integer;
+function t_goodsunitDao.updateById(entity: utgoodsunit): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

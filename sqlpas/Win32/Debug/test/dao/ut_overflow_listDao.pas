@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_overflow_listDao;
 
 interface
   uses SysUtils,utoverflowlist,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,overflow_date,overflow_number,remarks,user_id,';
         TABLE_ADD_COL = 'overflow_date,overflow_number,remarks,user_id,';
   Type
-   TDao = class
+   t_overflow_listDao = class
     public
     function add(entity: utoverflowlist): Integer;  //新增 一条 id
     function updateById(entity: utoverflowlist): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_overflow_listDao }
 
-function TDao.add(entity: utoverflowlist): Integer;
+functiont_overflow_listDao.add(entity: utoverflowlist): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.overflow_date,entity.overflow_number,entity.remarks,entity.user_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_overflow_listDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utoverflowlist): TList<utoverflowlist>;
+function t_overflow_listDao.findList(entity: utoverflowlist): TList<utoverflowlist>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utoverflowlist;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -82,11 +76,6 @@ entity.overflow_number := FieldByName(overflow_number).AsString;
 entity.remarks := FieldByName(remarks).AsString;
 entity.user_id := FieldByName(user_id).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -94,7 +83,7 @@ entity.user_id := FieldByName(user_id).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utoverflowlist;
+function t_overflow_listDao.getOneById(id: Integer): utoverflowlist;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -112,11 +101,6 @@ entity.overflow_number := FieldByName(overflow_number).AsString;
 entity.remarks := FieldByName(remarks).AsString;
 entity.user_id := FieldByName(user_id).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -124,13 +108,13 @@ entity.user_id := FieldByName(user_id).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utoverflowlist): Integer;
+function t_overflow_listDao.updateById(entity: utoverflowlist): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.overflow_date,entity.overflow_number,entity.remarks,entity.user_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

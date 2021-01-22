@@ -1,0 +1,7 @@
+unit uService;
+
+interface
+ uses
+implementation
+
+end.

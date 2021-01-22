@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_roleDao;
 
 interface
   uses SysUtils,utrole,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,bz,name,remarks,';
         TABLE_ADD_COL = 'bz,name,remarks,';
   Type
-   TDao = class
+   t_roleDao = class
     public
     function add(entity: utrole): Integer;  //新增 一条 id
     function updateById(entity: utrole): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_roleDao }
 
-function TDao.add(entity: utrole): Integer;
+functiont_roleDao.add(entity: utrole): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.bz,entity.name,entity.remarks,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_roleDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utrole): TList<utrole>;
+function t_roleDao.findList(entity: utrole): TList<utrole>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utrole;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -80,11 +74,6 @@ entity.bz := FieldByName(bz).AsString;
 entity.name := FieldByName(name).AsString;
 entity.remarks := FieldByName(remarks).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -92,7 +81,7 @@ entity.remarks := FieldByName(remarks).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utrole;
+function t_roleDao.getOneById(id: Integer): utrole;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -109,11 +98,6 @@ entity.bz := FieldByName(bz).AsString;
 entity.name := FieldByName(name).AsString;
 entity.remarks := FieldByName(remarks).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -121,13 +105,13 @@ entity.remarks := FieldByName(remarks).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utrole): Integer;
+function t_roleDao.updateById(entity: utrole): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.bz,entity.name,entity.remarks,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

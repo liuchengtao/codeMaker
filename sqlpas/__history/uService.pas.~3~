@@ -1,0 +1,37 @@
+unit uService;
+
+interface
+ uses uBaseDM,System.Generics.Collections,uDao;
+  Type
+  TService = class
+    public
+      function findById(id: Integer): RTest;
+      function update(entity: TTest): Integer;
+      function deleteById(id: Integer): Integer;
+      function findList(entity: TTest): TList<RTest>;
+  end;
+implementation
+
+{ TService }
+
+function TService.deleteById(id: Integer): Integer;
+begin
+  Result :=
+end;
+
+function TService.findById(id: Integer): RTest;
+begin
+
+end;
+
+function TService.findList(entity: TTest): TList<RTest>;
+begin
+
+end;
+
+function TService.update(entity: TTest): Integer;
+begin
+
+end;
+
+end.

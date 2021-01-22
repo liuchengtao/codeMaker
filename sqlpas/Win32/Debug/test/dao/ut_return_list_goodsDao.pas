@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_return_list_goodsDao;
 
 interface
   uses SysUtils,utreturnlistgoods,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,code,model,name,num,price,total,unit,return_list_id,type_id,goods_id,';
         TABLE_ADD_COL = 'code,model,name,num,price,total,unit,return_list_id,type_id,goods_id,';
   Type
-   TDao = class
+   t_return_list_goodsDao = class
     public
     function add(entity: utreturnlistgoods): Integer;  //新增 一条 id
     function updateById(entity: utreturnlistgoods): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_return_list_goodsDao }
 
-function TDao.add(entity: utreturnlistgoods): Integer;
+functiont_return_list_goodsDao.add(entity: utreturnlistgoods): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.code,entity.model,entity.name,entity.num,entity.price,entity.total,entity.unit,entity.return_list_id,entity.type_id,entity.goods_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_return_list_goodsDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utreturnlistgoods): TList<utreturnlistgoods>;
+function t_return_list_goodsDao.findList(entity: utreturnlistgoods): TList<utreturnlistgoods>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utreturnlistgoods;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -94,11 +88,6 @@ entity.return_list_id := FieldByName(return_list_id).AsString;
 entity.type_id := FieldByName(type_id).AsString;
 entity.goods_id := FieldByName(goods_id).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -106,7 +95,7 @@ entity.goods_id := FieldByName(goods_id).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utreturnlistgoods;
+function t_return_list_goodsDao.getOneById(id: Integer): utreturnlistgoods;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -130,11 +119,6 @@ entity.return_list_id := FieldByName(return_list_id).AsString;
 entity.type_id := FieldByName(type_id).AsString;
 entity.goods_id := FieldByName(goods_id).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -142,13 +126,13 @@ entity.goods_id := FieldByName(goods_id).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utreturnlistgoods): Integer;
+function t_return_list_goodsDao.updateById(entity: utreturnlistgoods): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.code,entity.model,entity.name,entity.num,entity.price,entity.total,entity.unit,entity.return_list_id,entity.type_id,entity.goods_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

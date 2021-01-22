@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_sale_listDao;
 
 interface
   uses SysUtils,utsalelist,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,amount_paid,amount_payable,remarks,sale_date,sale_number,state,user_id,customer_id,';
         TABLE_ADD_COL = 'amount_paid,amount_payable,remarks,sale_date,sale_number,state,user_id,customer_id,';
   Type
-   TDao = class
+   t_sale_listDao = class
     public
     function add(entity: utsalelist): Integer;  //新增 一条 id
     function updateById(entity: utsalelist): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_sale_listDao }
 
-function TDao.add(entity: utsalelist): Integer;
+functiont_sale_listDao.add(entity: utsalelist): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.amount_paid,entity.amount_payable,entity.remarks,entity.sale_date,entity.sale_number,entity.state,entity.user_id,entity.customer_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_sale_listDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utsalelist): TList<utsalelist>;
+function t_sale_listDao.findList(entity: utsalelist): TList<utsalelist>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utsalelist;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -90,11 +84,6 @@ entity.state := FieldByName(state).AsString;
 entity.user_id := FieldByName(user_id).AsString;
 entity.customer_id := FieldByName(customer_id).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -102,7 +91,7 @@ entity.customer_id := FieldByName(customer_id).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utsalelist;
+function t_sale_listDao.getOneById(id: Integer): utsalelist;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -124,11 +113,6 @@ entity.state := FieldByName(state).AsString;
 entity.user_id := FieldByName(user_id).AsString;
 entity.customer_id := FieldByName(customer_id).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -136,13 +120,13 @@ entity.customer_id := FieldByName(customer_id).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utsalelist): Integer;
+function t_sale_listDao.updateById(entity: utsalelist): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.amount_paid,entity.amount_payable,entity.remarks,entity.sale_date,entity.sale_number,entity.state,entity.user_id,entity.customer_id,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

@@ -1,4 +1,4 @@
-unit uDao;
+unit ut_goodsDao;
 
 interface
   uses SysUtils,utgoods,System.Generics.Collections,FireDAC.Comp.Client,uBaseDM;
@@ -6,7 +6,7 @@ interface
         TABLE_COL = 'id,code,inventory_quantity,min_num,model,name,producer,purchasing_price,remarks,selling_price,unit,type_id,state,last_purchasing_price,';
         TABLE_ADD_COL = 'code,inventory_quantity,min_num,model,name,producer,purchasing_price,remarks,selling_price,unit,type_id,state,last_purchasing_price,';
   Type
-   TDao = class
+   t_goodsDao = class
     public
     function add(entity: utgoods): Integer;  //新增 一条 id
     function updateById(entity: utgoods): Integer;  //修改一条记录 By id
@@ -16,22 +16,22 @@ interface
   end;
 implementation
 uses System.Json,System.JSON.Builders;
-{ TDao }
+{ t_goodsDao }
 
-function TDao.add(entity: utgoods): Integer;
+functiont_goodsDao.add(entity: utgoods): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'insert into %0:S(%1:S) Values ({SQL_ADD_COL});';
-    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.name,entity.age,entity.bz,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,TABLE_ADD_COL,entity.id,entity.code,entity.inventory_quantity,entity.min_num,entity.model,entity.name,entity.producer,entity.purchasing_price,entity.remarks,entity.selling_price,entity.unit,entity.type_id,entity.state,entity.last_purchasing_price,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;
   End;
 end;
 
-function TDao.deleteById(id: Integer): Integer;
+function t_goodsDao.deleteById(id: Integer): Integer;
 var sqlStr: String;
 begin
   Result := -1;
@@ -44,18 +44,12 @@ begin
   End;
 end;
 
-function TDao.findList(entity: utgoods): TList<utgoods>;
+function t_goodsDao.findList(entity: utgoods): TList<utgoods>;
 var wc: TWhereClause;
    sqlStr,wcStr: String;
    qry: TFDQuery;
    entity1: utgoods;
 begin
-//    wc := TWhereClause.Create
-//          .add('id',entity.id)
-//          .add('name',entity.name)
-//          .add('age',entity.age)
-//          .add('bz',entity.bz)
-//          .add('address',entity.address);
     Result := TList<RTest>.Create;
     wc := TWhereClause.Create
       .add(id,entity.id)
@@ -100,11 +94,6 @@ entity.type_id := FieldByName(type_id).AsString;
 entity.state := FieldByName(state).AsString;
 entity.last_purchasing_price := FieldByName(last_purchasing_price).AsString;
 
-//        test.id := FieldByName('id').AsInteger;
-//        test.name := FieldByName('name').AsString;
-//        test.age := FieldByName('age').AsInteger;
-//        test.bz := FieldByName('bz').AsString;
-//        test.address := FieldByName('address').AsString;
         Result.Add(entity1);
         Next;
       end;
@@ -112,7 +101,7 @@ entity.last_purchasing_price := FieldByName(last_purchasing_price).AsString;
     qry.Free;
 end;
 
-function TDao.getOneById(id: Integer): utgoods;
+function t_goodsDao.getOneById(id: Integer): utgoods;
 var sqlStr: String;
    qry: TFDQuery;
 begin
@@ -139,11 +128,6 @@ entity.type_id := FieldByName(type_id).AsString;
 entity.state := FieldByName(state).AsString;
 entity.last_purchasing_price := FieldByName(last_purchasing_price).AsString;
 
-//      Result.id := FieldByName('id').AsInteger;
-//      Result.name := FieldByName('name').AsString;
-//      Result.age := FieldByName('age').AsInteger;
-//      Result.bz := FieldByName('bz').AsString;
-//      Result.address := FieldByName('address').AsString;
     end;
     qry.Free;
   except
@@ -151,13 +135,13 @@ entity.last_purchasing_price := FieldByName(last_purchasing_price).AsString;
   End;
 end;
 
-function TDao.updateById(entity: utgoods): Integer;
+function t_goodsDao.updateById(entity: utgoods): Integer;
 var sqlStr: String;
 begin
   Result := -1;
   Try
     sqlStr := 'update %0:S set {SQL_UPDATE_VALUE} where id = %1:D';
-    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.name,entity.age,entity.age,entity.address]);
+    sqlStr := Format(sqlStr,[TABLE_NAME,entity.id,entity.code,entity.inventory_quantity,entity.min_num,entity.model,entity.name,entity.producer,entity.purchasing_price,entity.remarks,entity.selling_price,entity.unit,entity.type_id,entity.state,entity.last_purchasing_price,]);
     Result := BaseDM.ExecSQL(sqlStr);
   Except
     Result := -1;

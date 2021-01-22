@@ -151,8 +151,6 @@ object Form2: TForm2
           ItemHeight = 13
           TabOrder = 0
           OnClick = CheckListBox1Click
-          ExplicitTop = 27
-          ExplicitHeight = 337
         end
         object tableEdt: TEdit
           Left = 381
