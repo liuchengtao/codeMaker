@@ -99,7 +99,7 @@ begin
    temStr := StringReplace(temStr,'{TABLE_ADD_COL}',sqlCol,[rfReplaceAll, rfIgnoreCase]);
 
   //4 –¥»ÎSQL_COL_ADD
-  temStr := StringReplace(temStr,'{SQL_COL_ADD}',Self.getSQLADDCOL,[rfReplaceAll, rfIgnoreCase]);
+  temStr := StringReplace(temStr,'{SQL_ADD_COL}',Self.getSQLADDCOL,[rfReplaceAll, rfIgnoreCase]);
 
   //5 –¥»ÎWHERE_CLAUSE
   temStr := StringReplace(temStr,'{WHERE_CLAUSE}',Self.getWHERECLAUSE,[rfReplaceAll, rfIgnoreCase]);
