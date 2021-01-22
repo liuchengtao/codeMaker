@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.810,D:\Users\DELL\103\Project1.dproj=D:\Users\DELL\103\cenzCodeMaker\sqlpas\sql.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.212,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.942,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.293,D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas=D:\Users\DELL\103\cenzCodeMaker\sqlpas\pas\uDao.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.415,=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.262,D:\Users\DELL\103\Unit2.dfm=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit2.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.071,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.831,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.098,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.654,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.449,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.322,=D:\Users\DELL\103\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.964,=D:\Users\DELL\103\ServerMethodsUnit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.727,=D:\Users\DELL\103\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.262,D:\Users\DELL\103\Unit2.pas=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.754,D:\Users\DELL\103\cenzCodeMaker\sqlpas\pas\uBaseDao.pas=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.225,=D:\Users\DELL\103\ServerContainerUnit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.979,=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.033,=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.550,=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.914,D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas=D:\Users\DELL\103\cenzCodeMaker\sqlpas\pas\uSqlTools.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.885,=D:\Users\DELL\103\cenzCodeMaker\sqlpas\Unit3.pas</Transaction>
+    <Transaction>2021-01-21 21:31:30.054,=D:\Users\DELL\103\cenzCodeMaker\sqlpas\pas\uBaseDM.pas</Transaction>
+    <Transaction>2021-01-21 23:31:55.336,D:\Users\DELL\103\cenzCodeMaker\sqlpas\pas\uDao.pas=</Transaction>
+  </Transactions>
+</BorlandProject>

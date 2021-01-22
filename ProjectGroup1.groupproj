@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{6243504C-B829-4208-B034-9269C03105A1}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="cenzCodeMaker.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="sqlpas\sql.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="cenzCodeMaker">
+        <MSBuild Projects="cenzCodeMaker.dproj"/>
+    </Target>
+    <Target Name="cenzCodeMaker:Clean">
+        <MSBuild Projects="cenzCodeMaker.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="cenzCodeMaker:Make">
+        <MSBuild Projects="cenzCodeMaker.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="sql">
+        <MSBuild Projects="sqlpas\sql.dproj"/>
+    </Target>
+    <Target Name="sql:Clean">
+        <MSBuild Projects="sqlpas\sql.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="sql:Make">
+        <MSBuild Projects="sqlpas\sql.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="cenzCodeMaker;sql"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="cenzCodeMaker:Clean;sql:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="cenzCodeMaker:Make;sql:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

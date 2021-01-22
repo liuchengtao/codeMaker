@@ -1,0 +1,6 @@
+unit uEntity;
+interface
+ type
+   
+db_jxc.t_log = Recordid: String;content: String;time: String;type: String;user_id: Integer;end;
+implementation

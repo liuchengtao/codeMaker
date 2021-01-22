@@ -1,0 +1,14 @@
+object BaseDM: TBaseDM
+  OldCreateOrder = False
+  Height = 423
+  Width = 606
+  object BaseConn: TFDConnection
+    Left = 432
+    Top = 80
+  end
+  object FDQuery1: TFDQuery
+    Connection = BaseConn
+    Left = 246
+    Top = 168
+  end
+end

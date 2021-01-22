@@ -1,0 +1,7 @@
+unit uEntity;
+%0:S
+interface
+ type
+   %1:S
+ end;
+implementation

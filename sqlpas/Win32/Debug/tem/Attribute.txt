@@ -1,0 +1,29 @@
+uses
+SysUtils, RTTI, TypInfo,Types;
+
+type
+Table = class(TCustomAttribute)
+private
+FName: string;
+FTitle: string;
+published
+
+public
+constructor Create(ATableName, ATitle: string);
+property Name: string read FName write FName;
+property Title: string read FTitle write FTitle;
+end;
+
+FieldInfo = class(TCustomAttribute)
+private
+FFieldName: string;
+FTitle: string;
+published
+public
+constructor Create(AFieldName, ATitle: string);
+//字段名
+property FieldName: string read FFieldName write FFieldName;
+//标题
+property Title: string read FTitle write FTitle;
+end;
+
